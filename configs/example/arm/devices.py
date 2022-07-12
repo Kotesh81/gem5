@@ -101,9 +101,10 @@ class CpuCluster(SubSystem):
         self._l1i_type = l1i_type
         self._l1d_type = l1d_type
         self._l2_type = l2_type
-        # self.l3 = 0
+        
         assert num_cpus > 0
 
+        self._l3 = False
         self.voltage_domain = VoltageDomain(voltage=cpu_voltage)
         self.clk_domain = SrcClockDomain(clock=cpu_clock,
                                          voltage_domain=self.voltage_domain)
@@ -138,7 +139,13 @@ class CpuCluster(SubSystem):
         for cpu in self.cpus:
             cpu.connectCachedPorts(self.toL2Bus.cpu_side_ports)
         self.toL2Bus.mem_side_ports = self.l2.cpu_side
-        
+    
+    def addL3(self,clk_domain):
+        self.toL3Bus = L2XBar(width=64, clk_domain=clk_domain)
+        self._l3 = True
+        self.l3 = L3()
+        self.toL3Bus.cpu_side_ports = self.l2.mem_side
+        self.toL3Bus.mem_side_ports = self.l3.cpu_side
         
     def addPMUs(self, ints, events=[]):
         """
@@ -168,7 +175,12 @@ class CpuCluster(SubSystem):
 
     def connectMemSide(self, bus):
         try:
-            self.l2.mem_side = bus.cpu_side_ports
+            
+            if self._l3 :
+                self.l3.mem_side = bus.cpu_side_ports
+            else:
+                self.l2.mem_side = bus.cpu_side_ports
+
         except AttributeError:
             for cpu in self.cpus:
                 cpu.connectCachedPorts(bus.cpu_side_ports)
