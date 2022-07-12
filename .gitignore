@@ -1,4 +1,5 @@
 build
+se_results/*/
 parser.out
 parsetab.py
 cscope.files
@@ -31,3 +32,4 @@ m5out
 configs/example/memcheck.cfg
 configs/dram/lowp_sweep.cfg
 .pyenv
+
