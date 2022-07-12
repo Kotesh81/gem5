@@ -111,7 +111,6 @@ class SimpleSeSystem(System):
         if self.cpu_cluster.memoryMode() == "timing":
             self.cpu_cluster.addL1()
             self.cpu_cluster.addL2(self.cpu_cluster.clk_domain)
-            self.cpu_cluster.addL3(self.cpu_cluster.clk_domain)
         self.cpu_cluster.connectMemSide(self.membus)
 
         # Tell gem5 about the memory mode used by the CPUs we are

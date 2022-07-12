@@ -135,17 +135,9 @@ class CpuCluster(SubSystem):
             return
         self.toL2Bus = L2XBar(width=64, clk_domain=clk_domain)
         self.l2 = self._l2_type()
-        # self.l2 = SimpleCache(size='1MB')
         for cpu in self.cpus:
             cpu.connectCachedPorts(self.toL2Bus.cpu_side_ports)
         self.toL2Bus.mem_side_ports = self.l2.cpu_side
-
-    def addL3(self, clk_domain):
-        self.l3 = L3(clk_domain=clk_domain)
-        # self.l3 = SimpleCache(size='16MB')
-        self.toL3Bus = L2XBar(width=64, clk_domain=clk_domain)
-        self.l2.mem_side = self.toL3Bus.cpu_side_ports
-        self.toL3Bus.mem_side_ports = self.l3.cpu_side
         
         
     def addPMUs(self, ints, events=[]):
@@ -176,11 +168,7 @@ class CpuCluster(SubSystem):
 
     def connectMemSide(self, bus):
         try:
-            if self.l3 is not None:
-                self.l3.mem_side = bus.cpu_side_ports
-            else:
-                self.l2.mem_side = bus.cpu_side_ports
-
+            self.l2.mem_side = bus.cpu_side_ports
         except AttributeError:
             for cpu in self.cpus:
                 cpu.connectCachedPorts(bus.cpu_side_ports)
