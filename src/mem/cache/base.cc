@@ -1958,6 +1958,8 @@ BaseCache::CacheCmdStats::CacheCmdStats(BaseCache &c,
                ("number of " + name + " hit ticks").c_str()),
       ADD_STAT(missLatency, statistics::units::Tick::get(),
                ("number of " + name + " miss ticks").c_str()),
+      ADD_STAT(missLatencyH, statistics::units::Count::get(),
+               ("Histogram of " + name + " missLatency values").c_str()),
       ADD_STAT(accesses, statistics::units::Count::get(),
                ("number of " + name + " accesses(hits+misses)").c_str()),
       ADD_STAT(missRate, statistics::units::Ratio::get(),
@@ -1984,6 +1986,7 @@ BaseCache::CacheCmdStats::CacheCmdStats(BaseCache &c,
                     statistics::units::Tick, statistics::units::Count>::get(),
                ("average " + name + " mshr uncacheable latency").c_str())
 {
+    // missLatency.init(16); // number of buckets
 }
 
 void
@@ -2029,6 +2032,12 @@ BaseCache::CacheCmdStats::regStatsFromParent()
     for (int i = 0; i < max_requestors; i++) {
         missLatency.subname(i, system->getRequestorName(i));
     }
+
+    //Miss Latency histogram
+    missLatencyH
+          .init(16)
+          .flags(total | nozero | nonan)
+          ;
 
     // access formulas
     accesses.flags(total | nozero | nonan);

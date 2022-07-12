@@ -1015,6 +1015,11 @@ class BaseCache : public ClockedObject
          * Used to calculate the average miss latency.
          */
         statistics::Vector missLatency;
+        /**
+         * Below is used to plot the histogram of missLatencies
+         * 
+         */
+        statistics::Histogram missLatencyH;
         /** The number of accesses per command and thread. */
         statistics::Formula accesses;
         /** The miss rate per command and thread. */

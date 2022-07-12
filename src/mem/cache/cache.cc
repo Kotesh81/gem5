@@ -781,6 +781,9 @@ Cache::serviceMSHRTargets(MSHR *mshr, const PacketPtr pkt, CacheBlk *blk)
                 stats.cmdStats(tgt_pkt)
                     .missLatency[tgt_pkt->req->requestorId()] +=
                     completion_time - target.recvTime;
+                //collecting missLatency Values for histogram
+                stats.cmdStats(tgt_pkt)
+                    .missLatencyH.sample(completion_time - target.recvTime);
             } else if (pkt->cmd == MemCmd::UpgradeFailResp) {
                 // failed StoreCond upgrade
                 assert(tgt_pkt->cmd == MemCmd::StoreCondReq ||
