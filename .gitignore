@@ -1,5 +1,5 @@
 build
-se_results/*/
+se_results/
 parser.out
 parsetab.py
 cscope.files
